@@ -180,6 +180,16 @@ After installation the agent sees one tool per command (e.g. `lifesci_seq_fetch`
    panels with negative controls, or recorded hit tables).
 5. `lifesci_report` — evidence-graded write-up with the provenance trail.
 
+### Example prompt
+
+Paste this into a DeepSeek Harness session after installing the plugin:
+
+> Using the lifesci tools, validate the annotation of human hemoglobin subunit alpha
+> (UniProt P69905): fetch the entry and sequence, check the Pfam globin domain
+> (PF00042), look up its family/orthology assignment, and write a short
+> evidence-graded Markdown report. Record the database releases and provenance,
+> flag uncertain calls, and state the search parameters before any absence claim.
+
 ## Repository layout
 
 ```
