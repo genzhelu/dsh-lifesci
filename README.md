@@ -1,5 +1,7 @@
 # dsh-lifesci — reproducible life-science tools for DeepSeek Harness
 
+English · [中文](README.zh.md)
+
 `@genzhelu/dsh-lifesci` is a host plugin for DeepSeek Harness that adds **17 `lifesci_*` agent
 tools** for reproducible molecular and structural-biology work: sequence retrieval and homolog
 search, domain and orthology evidence, structure retrieval/search/superposition,
