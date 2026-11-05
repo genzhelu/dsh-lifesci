@@ -1,0 +1,407 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/struct.search.schema.json",
+  "title": "lifesci.struct.search payload",
+  "description": "Foldseek search results with background calibration, sanity-anchor checks and cross-database caveats.",
+  "type": "object",
+  "required": [
+    "mode",
+    "queries",
+    "hits",
+    "n_hits",
+    "background",
+    "anchors",
+    "db_metadata",
+    "cross_database_evalue_checks"
+  ],
+  "properties": {
+    "dry_run": {
+      "type": "boolean"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "panel",
+        "web",
+        "from_table"
+      ]
+    },
+    "planned_commands": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "queries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "accession": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "hits": {
+      "type": "object",
+      "description": "query id -> normalised hit list (rank, db, target_accession, tm_score, prob, evalue, ...).",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    },
+    "n_hits": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "panel_controls": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "n_controls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "controls": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "control_max_tm": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "background": {
+      "type": "object",
+      "required": [
+        "available"
+      ],
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "n_controls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "control_max_tm": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Highest TM of any negative control against the panel (the empirical background)."
+        },
+        "margin": {
+          "type": "number"
+        },
+        "min_interpretable_tm": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "control_max_tm + margin: hits at or below this are within the negative-control background."
+        },
+        "per_control": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "anchors": {
+      "type": "object",
+      "required": [
+        "checked",
+        "passed",
+        "failed",
+        "rows"
+      ],
+      "properties": {
+        "checked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "have_anchors": {
+          "type": "boolean"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "query",
+              "found",
+              "passed",
+              "reasons"
+            ],
+            "properties": {
+              "query": {
+                "type": "string"
+              },
+              "query_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "target_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "family_hint": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "min_tm": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "min_prob": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "max_rank": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "found": {
+                "type": "boolean"
+              },
+              "rank": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "tm_score": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "prob": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "evalue": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "matched_target": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "db": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "passed": {
+                "type": "boolean"
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "db_metadata": {
+      "type": "object",
+      "required": [
+        "databases"
+      ],
+      "properties": {
+        "databases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "requested_databases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "foldseek_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "n_targets": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "n_tables": {
+          "type": "integer"
+        },
+        "tables": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "top_hit_cap_per_database": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "top_hit_cap_per_query": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "panel_databases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evalue_note": {
+          "type": "string"
+        },
+        "extra": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "cross_database_evalue_checks": {
+      "type": "array",
+      "description": "Pairs observed in more than one database, whose E-values are not comparable.",
+      "items": {
+        "type": "object",
+        "required": [
+          "query_accession",
+          "target_accession",
+          "databases",
+          "not_comparable"
+        ],
+        "properties": {
+          "query_accession": {
+            "type": "string"
+          },
+          "target_accession": {
+            "type": "string"
+          },
+          "databases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "observations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "evalue_ratio": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "not_comparable": {
+            "const": true
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "interpretation": {
+      "type": "object"
+    },
+    "resolved": {
+      "type": "object"
+    },
+    "n_queries": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Convenience top-level query count."
+    },
+    "n_targets": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "Target-panel size when known (None for database/web replay)."
+    }
+  },
+  "additionalProperties": true
+}

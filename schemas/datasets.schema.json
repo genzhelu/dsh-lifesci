@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/datasets.schema.json",
+  "title": "lifesci.datasets payload",
+  "description": "Local read-only dataset registry action result.",
+  "type": "object",
+  "required": ["action", "registry", "read_only"],
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": ["register", "list", "verify", "get", "remove"]
+    },
+    "registry": { "type": "string", "description": "Path of the JSON dataset registry file." },
+    "read_only": { "type": "boolean", "description": "Always true: datasets are never written." },
+    "n_datasets": { "type": "integer", "minimum": 0 },
+    "dataset": {
+      "type": "object",
+      "description": "One dataset record: name, kind, path, sha256, bytes, description, registered_at, read_only.",
+      "additionalProperties": true
+    },
+    "datasets": {
+      "type": "array",
+      "description": "All registered datasets, sorted by name, with an added 'exists' flag in list mode.",
+      "items": { "type": "object", "additionalProperties": true }
+    },
+    "verification": {
+      "type": "object",
+      "description": "verify_dataset() result: ok plus per-file sha256 status entries.",
+      "properties": {
+        "ok": { "type": "boolean" },
+        "name": { "type": "string" },
+        "kind": { "type": "string" },
+        "path": { "type": "string" },
+        "n_entries": { "type": "integer", "minimum": 0 },
+        "n_mismatched": { "type": "integer", "minimum": 0 },
+        "n_missing": { "type": "integer", "minimum": 0 },
+        "entries": { "type": "array", "items": { "type": "object", "additionalProperties": true } }
+      },
+      "additionalProperties": true
+    },
+    "resolved": {
+      "type": "object",
+      "description": "get: absolute path, SHA-256 and byte size of the resolved (verified) dataset file.",
+      "required": ["path", "exists"],
+      "properties": {
+        "path": { "type": "string" },
+        "sha256": { "type": ["string", "null"] },
+        "bytes": { "type": ["integer", "null"] },
+        "exists": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "remove": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "dry_run": { "type": "boolean" },
+        "would_remove": { "type": "boolean" },
+        "removed": { "type": "boolean" },
+        "files_deleted": { "type": "boolean" },
+        "dataset": { "type": "object", "additionalProperties": true }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/remote.schema.json",
+  "title": "lifesci.remote payload",
+  "description": "Opt-in SSH remote-execution result. No credentials are ever returned.",
+  "type": "object",
+  "required": [
+    "action",
+    "n_hosts"
+  ],
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "list",
+        "plan",
+        "run"
+      ]
+    },
+    "n_hosts": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "hosts": {
+      "type": "array",
+      "description": "Configured host summaries (alias, host, user, port, work_dir, tool_paths keys) sorted by alias.",
+      "items": {
+        "type": "object",
+        "required": [
+          "alias"
+        ],
+        "properties": {
+          "alias": {
+            "type": "string"
+          },
+          "host": {
+            "type": "string"
+          },
+          "user": {
+            "type": "string"
+          },
+          "port": {
+            "type": [
+              "integer",
+              "string"
+            ]
+          },
+          "work_dir": {
+            "type": "string"
+          },
+          "n_allowed_commands": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "tool_paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "key_configured": {
+            "type": "boolean",
+            "description": "Whether a private key path is configured for this host (the path itself is never returned)."
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "host": {
+      "type": "string",
+      "description": "Host alias the plan/job targets."
+    },
+    "dry_run": {
+      "type": "boolean"
+    },
+    "plan": {
+      "type": "object",
+      "description": "ssh execution plan (dry_run result from the remote adapter) when not executed.",
+      "additionalProperties": true
+    },
+    "job": {
+      "type": "object",
+      "description": "Executed remote job: host, argv, cwd, exit_code, stdout, stderr, started_at, finished_at, tool_version, provenance.",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "argv": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cwd": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "exit_code": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "stdout": {
+          "type": "string"
+        },
+        "stderr": {
+          "type": "string"
+        },
+        "started_at": {
+          "type": "string"
+        },
+        "finished_at": {
+          "type": "string"
+        },
+        "tool_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "duration_s": {
+          "type": "number"
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "out": {
+      "type": "string",
+      "description": "Path where the full job JSON was written (if requested)."
+    }
+  },
+  "additionalProperties": true
+}

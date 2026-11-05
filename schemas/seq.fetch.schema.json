@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/seq.fetch.schema.json",
+  "title": "lifesci.seq.fetch payload",
+  "description": "UniProt sequence/entry/proteome fetch results with release pinning and partial-failure reporting.",
+  "type": "object",
+  "required": ["entries", "sequences", "proteomes", "resolved", "errors"],
+  "properties": {
+    "dry_run": { "type": "boolean" },
+    "requested": { "type": "object" },
+    "planned_requests": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "Requests the command would issue (dry-run only, no network used)."
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["accession"],
+        "properties": {
+          "accession": { "type": "string" },
+          "parsed": {
+            "type": ["object", "null"],
+            "description": "Normalised UniProt entry subset (primaryAccession, protein_name, genes, organism, cross_references, features, comments, references, ...)."
+          },
+          "release": { "type": ["string", "null"] },
+          "url": { "type": ["string", "null"] },
+          "sha256": { "type": ["string", "null"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "sequences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["accession", "sequence", "length"],
+        "properties": {
+          "accession": { "type": "string" },
+          "header": { "type": ["string", "null"] },
+          "sequence": { "type": "string" },
+          "length": { "type": "integer", "minimum": 0 },
+          "release": { "type": ["string", "null"] },
+          "url": { "type": ["string", "null"] },
+          "sha256": { "type": ["string", "null"], "description": "SHA-256 of the upstream FASTA payload." },
+          "path": { "type": ["string", "null"], "description": "Written FASTA path, when write_sequences is enabled." },
+          "file_sha256": { "type": ["string", "null"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "proteomes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["proteome_id"],
+        "properties": {
+          "proteome_id": { "type": "string" },
+          "taxid": { "type": ["integer", "null"] },
+          "name": { "type": ["string", "null"] },
+          "path": { "type": ["string", "null"] },
+          "sha256": { "type": ["string", "null"] },
+          "bytes": { "type": ["integer", "null"] },
+          "n_sequences": { "type": ["integer", "null"] },
+          "release": { "type": ["string", "null"] },
+          "source": { "type": ["string", "null"], "description": "Which path was used: REST stream or release-pinned FTP fallback." },
+          "reference_proteome": { "type": ["boolean", "null"] },
+          "url": { "type": ["string", "null"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "resolved": {
+      "type": "object",
+      "required": ["cache_dir"],
+      "properties": {
+        "cache_dir": { "type": "string" },
+        "out_dir": { "type": ["string", "null"] },
+        "n_accessions_requested": { "type": "integer", "minimum": 0 },
+        "n_sequences": { "type": "integer", "minimum": 0 },
+        "n_entries": { "type": "integer", "minimum": 0 },
+        "n_proteomes": { "type": "integer", "minimum": 0 },
+        "n_errors": { "type": "integer", "minimum": 0 },
+        "releases": { "type": "object" },
+        "cache": { "type": "object" },
+        "schemas_dir": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "accession": { "type": "string" },
+          "proteome_id": { "type": "string" },
+          "taxid": { "type": "integer" },
+          "scope": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

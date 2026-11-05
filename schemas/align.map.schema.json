@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/align.map.schema.json",
+  "title": "lifesci.align.map payload",
+  "description": "Sequence-to-reference-MSA-row mapping with feature-span measurements.",
+  "type": "object",
+  "required": [
+    "alignment",
+    "features",
+    "queries",
+    "low_identity",
+    "n_queries",
+    "min_identity"
+  ],
+  "properties": {
+    "alignment": {
+      "type": "object",
+      "required": [
+        "path",
+        "reference_row",
+        "n_sequences",
+        "length"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "n_sequences": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "length": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reference_row": {
+          "type": "string"
+        },
+        "reference_ungapped_length": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "reference_candidates": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "auto mode: names of the candidate reference rows tried (null in fixed-row mode)."
+        },
+        "n_reference_candidates": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "auto mode: number of candidate reference rows tried (1 in fixed-row mode)."
+        }
+      },
+      "additionalProperties": true
+    },
+    "features": {
+      "type": "object",
+      "description": "Feature name -> {source: 'columns'|'reference_coords', spans: [[start,end],...], coords?: [[a,b],...]}.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": [
+              "columns",
+              "reference_coords"
+            ]
+          },
+          "coords_reference_row": {
+            "type": "string"
+          },
+          "spans": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "coords": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "queries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "reference_row",
+          "query_length",
+          "identity",
+          "coverage",
+          "n_aligned",
+          "lengths",
+          "low_identity"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "query_length": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "n_aligned": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "identity": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "coverage": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "lengths": {
+            "type": "object",
+            "description": "Feature name -> number of query residues inside the feature spans.",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "mapped_residues": {
+            "type": "object",
+            "description": "Feature name -> sorted 1-based query residue positions inside the feature spans.",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1
+              }
+            }
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "low_identity": {
+            "type": "boolean"
+          },
+          "reference_row": {
+            "type": "string",
+            "description": "Reference row this query was mapped to (the chosen row in auto mode)."
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "low_identity": {
+      "type": "array",
+      "description": "Queries mapping below min_identity (LOW_IDENTITY_MAPPING / FEATURE_SPAN_UNSTABLE warnings).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "identity": {
+            "type": "number"
+          },
+          "min_identity": {
+            "type": "number"
+          },
+          "n_aligned": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "n_queries": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "min_identity": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "query_file": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "integer"
+        },
+        "n_queries": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "out": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

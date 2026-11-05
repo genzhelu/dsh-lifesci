@@ -1,0 +1,407 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/contacts.schema.json",
+  "title": "lifesci.contacts payload",
+  "description": "Inter-element minimum atom-atom contact distances, percentiles, missing features, and bridges.",
+  "type": "object",
+  "required": [
+    "structures",
+    "features",
+    "feature_status",
+    "missing",
+    "pairs",
+    "skipped_pairs",
+    "bridges",
+    "thresholds",
+    "atom_selection"
+  ],
+  "properties": {
+    "structures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "path"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "format": {
+            "type": "string"
+          },
+          "n_chains": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "structure",
+          "status",
+          "n_atoms"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "structure": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "missing_chain",
+              "missing_residues",
+              "no_atoms"
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "columns",
+              "residues"
+            ]
+          },
+          "chains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "n_atoms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "n_residues": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "atoms": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "feature_status": {
+      "type": "object",
+      "description": "structure id -> feature id -> ok|missing_chain|missing_residues|no_atoms.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      }
+    },
+    "missing": {
+      "type": "array",
+      "description": "Explicit missing-feature report (FEATURE_MISSING warning).",
+      "items": {
+        "type": "object",
+        "required": [
+          "structure",
+          "feature",
+          "status"
+        ],
+        "properties": {
+          "structure": {
+            "type": "string"
+          },
+          "feature": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "pairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "structure",
+          "a",
+          "b",
+          "min_distance"
+        ],
+        "properties": {
+          "structure": {
+            "type": "string"
+          },
+          "a": {
+            "type": "string"
+          },
+          "b": {
+            "type": "string"
+          },
+          "min_distance": {
+            "type": "number",
+            "minimum": 0
+          },
+          "closest": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "a": {
+                "$ref": "#/$defs/atom"
+              },
+              "b": {
+                "$ref": "#/$defs/atom"
+              },
+              "distance": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "additionalProperties": true
+          },
+          "n_under": {
+            "type": "object",
+            "description": "Distance threshold (\u00c5, as a string key) -> count of atom pairs/atoms under it.",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "n_atoms_a": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "n_atoms_b": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "contact_positions": {
+            "type": "object",
+            "description": "Percentile position of the closest residue along each feature (0 = first residue, 100 = last).",
+            "properties": {
+              "a": {
+                "$ref": "#/$defs/position"
+              },
+              "b": {
+                "$ref": "#/$defs/position"
+              }
+            },
+            "additionalProperties": true
+          },
+          "residue_pairs": {
+            "type": "array",
+            "description": "Closest distinct residue pairs (shows per-residue minima for adjacent feature residues).",
+            "items": {
+              "type": "object",
+              "properties": {
+                "a": {
+                  "$ref": "#/$defs/residue"
+                },
+                "b": {
+                  "$ref": "#/$defs/residue"
+                },
+                "distance": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "skipped_pairs": {
+      "type": "array",
+      "description": "Requested/derived pairs that could not be computed (missing features/atoms).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "string"
+          },
+          "b": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "bridges": {
+      "type": "array",
+      "description": "Pairs whose members are far apart but both close to a third feature (CONTACT_BRIDGE_THROUGH_THIRD_FEATURE).",
+      "items": {
+        "type": "object",
+        "required": [
+          "structure",
+          "a",
+          "b",
+          "via"
+        ],
+        "properties": {
+          "structure": {
+            "type": "string"
+          },
+          "a": {
+            "type": "string"
+          },
+          "b": {
+            "type": "string"
+          },
+          "via": {
+            "type": "string"
+          },
+          "distance_ab": {
+            "type": "number"
+          },
+          "distance_via_a": {
+            "type": "number"
+          },
+          "distance_via_b": {
+            "type": "number"
+          },
+          "bridge_threshold": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "thresholds": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0
+      }
+    },
+    "bridge_threshold": {
+      "type": "number",
+      "minimum": 0
+    },
+    "top_pairs": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "atom_selection": {
+      "type": "object"
+    },
+    "colmaps": {
+      "type": "object"
+    },
+    "out": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "atom": {
+      "type": "object",
+      "required": [
+        "chain",
+        "seqid",
+        "atom",
+        "xyz"
+      ],
+      "properties": {
+        "chain": {
+          "type": "string"
+        },
+        "seqid": {
+          "type": "string"
+        },
+        "icode": {
+          "type": "string"
+        },
+        "resname": {
+          "type": "string"
+        },
+        "atom": {
+          "type": "string"
+        },
+        "xyz": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      },
+      "additionalProperties": true
+    },
+    "position": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "percentile": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "residue": {
+      "type": "object",
+      "properties": {
+        "chain": {
+          "type": "string"
+        },
+        "seqid": {
+          "type": "string"
+        },
+        "icode": {
+          "type": "string"
+        },
+        "resname": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

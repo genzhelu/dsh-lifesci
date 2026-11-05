@@ -1,0 +1,379 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/seq.search.schema.json",
+  "title": "lifesci.seq.search payload",
+  "description": "Homology-search hits, reciprocal checks, domain scan, curated presence cells/matrix and reproduction checks.",
+  "type": "object",
+  "required": [
+    "mode",
+    "queries",
+    "targets",
+    "hits",
+    "reciprocal",
+    "domain_scan",
+    "cells",
+    "matrix",
+    "counts"
+  ],
+  "properties": {
+    "dry_run": {
+      "type": "boolean"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "phmmer",
+        "hmmsearch",
+        "evidence"
+      ]
+    },
+    "planned_commands": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "queries": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "targets": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "hits": {
+      "type": "array",
+      "description": "Normalised best/hit records; fields depend on mode (query/target/evalue/... or organism/model/protein/evalue/...).",
+      "items": {
+        "type": "object"
+      }
+    },
+    "domain_scan": {
+      "type": "array",
+      "description": "Per-model domain hits from the optional local Pfam/HMM scan or recorded domain evidence.",
+      "items": {
+        "type": "object"
+      }
+    },
+    "reciprocal": {
+      "type": "object",
+      "required": [
+        "available"
+      ],
+      "properties": {
+        "available": {
+          "type": "boolean"
+        },
+        "pairs": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "n_reciprocal": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_forward_only": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_reverse_only": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_present": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_weak": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_absent": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "disagreements": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "cells": {
+      "type": "array",
+      "description": "Curated presence cells with organism/factor/verdict/evidence and per-model hit context.",
+      "items": {
+        "type": "object",
+        "required": [
+          "organism",
+          "factor",
+          "verdict"
+        ],
+        "properties": {
+          "organism": {
+            "type": "string"
+          },
+          "factor": {
+            "type": "string"
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "present",
+              "weak",
+              "absent",
+              "unknown"
+            ]
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "best_hit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evalue": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "model": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "models": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sequence_hit": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "sequence_evidence": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "human_review": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "matrix": {
+      "type": "object",
+      "description": "organism -> {factor: verdict}",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string",
+          "enum": [
+            "present",
+            "weak",
+            "absent",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "required": [
+        "n_queries",
+        "n_targets",
+        "n_hits",
+        "n_cells"
+      ],
+      "properties": {
+        "n_queries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_targets": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_hits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_domain_hits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_cells": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_present": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_weak": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_absent": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_sequence_rows": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_reciprocal_rows": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "counts_by_factor": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "present": {
+            "type": "integer"
+          },
+          "weak": {
+            "type": "integer"
+          },
+          "absent": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "domain_arbiter": {
+      "type": "object",
+      "required": [
+        "rows"
+      ],
+      "properties": {
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "n_domain_only": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_domain_supported": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_domain_without_sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_sequence_without_domain": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_absent": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "reproduction": {
+      "type": "object",
+      "properties": {
+        "checked": {
+          "type": "boolean"
+        },
+        "n_expected_verdicts": {
+          "type": "integer"
+        },
+        "n_expected_evidence": {
+          "type": "integer"
+        },
+        "n_mismatches": {
+          "type": "integer"
+        },
+        "matrix_match": {
+          "type": "boolean"
+        },
+        "evidence_match": {
+          "type": "boolean"
+        },
+        "mismatches": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "params": {
+      "type": "object"
+    },
+    "resolved": {
+      "type": "object"
+    },
+    "warnings_predicted": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "n_queries": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Convenience top-level query count (same as counts.n_queries)."
+    },
+    "n_targets": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Convenience top-level target-database count (same as counts.n_targets)."
+    },
+    "n_hits": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Convenience top-level hit count (same as counts.n_hits)."
+    }
+  },
+  "additionalProperties": true
+}

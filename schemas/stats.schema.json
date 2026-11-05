@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/stats.schema.json",
+  "title": "lifesci.stats payload",
+  "description": "Correlation / partial-correlation / log-log regression payload for one table.",
+  "type": "object",
+  "required": [
+    "table",
+    "variables",
+    "n",
+    "pearson",
+    "spearman",
+    "partial",
+    "loglog",
+    "groups",
+    "outliers",
+    "caveats"
+  ],
+  "properties": {
+    "table": {
+      "type": "object",
+      "required": ["n_input_rows", "n_selected", "n_used"],
+      "properties": {
+        "path": { "type": ["string", "null"] },
+        "format": { "type": "string", "enum": ["json", "tsv", "csv", "inline"] },
+        "sha256": { "type": ["string", "null"] },
+        "bytes": { "type": ["integer", "null"] },
+        "n_input_rows": { "type": "integer", "minimum": 0 },
+        "n_selected": { "type": "integer", "minimum": 0 },
+        "n_used": { "type": ["integer", "null"], "minimum": 0 },
+        "id_column": { "type": "string" },
+        "filter": { "type": ["object", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "variables": {
+      "type": "object",
+      "properties": {
+        "x": { "type": "string" },
+        "y": { "type": "string" },
+        "control": { "type": ["string", "null"] },
+        "control_definition": { "type": ["object", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "n": { "type": "integer", "minimum": 0 },
+    "pearson": {
+      "type": ["object", "null"],
+      "properties": {
+        "r": { "type": ["number", "null"] },
+        "p": { "type": ["number", "null"] },
+        "n": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "spearman": {
+      "type": ["object", "null"],
+      "properties": {
+        "rho": { "type": ["number", "null"] },
+        "p": { "type": ["number", "null"] },
+        "n": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "partial": {
+      "type": ["object", "null"],
+      "properties": {
+        "r": { "type": ["number", "null"] },
+        "n": { "type": "integer", "minimum": 0 },
+        "controlled_for": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "loglog": {
+      "type": ["object", "null"],
+      "properties": {
+        "slope": { "type": ["number", "null"] },
+        "intercept": { "type": ["number", "null"] },
+        "r2": { "type": ["number", "null"] },
+        "n": { "type": "integer", "minimum": 3 },
+        "pearson": { "type": ["number", "null"] },
+        "p_value": { "type": ["number", "null"] },
+        "stderr": { "type": ["number", "null"] },
+        "model": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "group": { "type": "string" },
+          "n": { "type": "integer", "minimum": 0 },
+          "pearson": { "type": ["number", "null"] },
+          "spearman": { "type": ["number", "null"] },
+          "partial": { "type": ["number", "null"] },
+          "loglog": { "type": ["object", "null"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "outliers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": { "type": "string" },
+          "x": { "type": ["number", "null"] },
+          "y": { "type": ["number", "null"] },
+          "standardised_residual": { "type": ["number", "null"] },
+          "direction": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "caveats": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Mandatory caveat codes: CORRELATION_NOT_CAUSATION, PHYLOGENETIC_NON_INDEPENDENCE, SMALL_N."
+    },
+    "caveat_notes": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+    "summary": {
+      "type": "object",
+      "description": "Convenience numeric aliases of the main statistics (n, Pearson r, partial r, log-log slope/r2).",
+      "properties": {
+        "n": { "type": "integer", "minimum": 0 },
+        "pearson_r": { "type": ["number", "null"] },
+        "spearman_rho": { "type": ["number", "null"] },
+        "partial_r": { "type": ["number", "null"] },
+        "loglog_slope": { "type": ["number", "null"] },
+        "loglog_r2": { "type": ["number", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": { "type": "string" },
+          "x": { "type": ["number", "null"] },
+          "y": { "type": ["number", "null"] },
+          "group": { "type": ["string", "null"] },
+          "control": { "type": ["number", "null"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "out": { "type": "string", "description": "Path where the payload JSON was written." }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/domains.schema.json",
+  "title": "lifesci.domains payload",
+  "description": "Domain/family annotation with explicit per-domain verdicts, evidence strings, and a sequence-vs-domain arbiter.",
+  "type": "object",
+  "required": ["proteins", "domain_counts", "hmm_scan", "arbiter", "resolved"],
+  "properties": {
+    "dry_run": { "type": "boolean" },
+    "requested": { "type": "object" },
+    "planned_requests": { "type": "array", "items": { "type": "object" } },
+    "proteins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["accession", "domains", "domain_summary", "arbiter"],
+        "properties": {
+          "accession": { "type": "string" },
+          "available": { "type": "boolean" },
+          "entries": { "type": "array", "items": { "type": "object" } },
+          "n_entries": { "type": "integer", "minimum": 0 },
+          "release": { "type": ["string", "null"] },
+          "url": { "type": ["string", "null"] },
+          "sha256": { "type": ["string", "null"] },
+          "domains": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "required": ["model", "verdict", "evidence", "domain_absent"],
+              "properties": {
+                "model": { "type": "string" },
+                "verdict": { "type": "string", "enum": ["present", "weak", "absent", "unknown"] },
+                "evidence": { "type": "string" },
+                "evalue": { "type": ["number", "null"] },
+                "score": { "type": ["number", "null"] },
+                "model_cov": { "type": ["number", "null"] },
+                "protein_length": { "type": ["integer", "null"] },
+                "present_evalue_cutoff": { "type": "number" },
+                "weak_evalue_cutoff": { "type": "number" },
+                "report_evalue": { "type": ["number", "null"] },
+                "locations": { "type": "array", "items": { "type": "object" } },
+                "sources": { "type": "object" },
+                "source_used": { "type": "string" },
+                "domain_absent": { "type": "boolean" }
+              },
+              "additionalProperties": true
+            }
+          },
+          "domain_summary": {
+            "type": "object",
+            "required": ["verdicts", "present", "weak", "absent", "unknown"],
+            "properties": {
+              "verdicts": { "type": "object" },
+              "present": { "type": "array", "items": { "type": "string" } },
+              "weak": { "type": "array", "items": { "type": "string" } },
+              "absent": { "type": "array", "items": { "type": "string" } },
+              "unknown": { "type": "array", "items": { "type": "string" } },
+              "domain_absent": { "type": "array", "items": { "type": "string" } },
+              "present_evalue_cutoff": { "type": "number" },
+              "weak_evalue_cutoff": { "type": "number" },
+              "report_evalue": { "type": "number" }
+            },
+            "additionalProperties": true
+          },
+          "arbiter": { "$ref": "#/$defs/arbiter" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "domain_counts": {
+      "type": "object",
+      "required": ["present", "weak", "absent", "unknown"],
+      "properties": {
+        "present": { "type": "integer", "minimum": 0 },
+        "weak": { "type": "integer", "minimum": 0 },
+        "absent": { "type": "integer", "minimum": 0 },
+        "unknown": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "hmm_scan": {
+      "type": "object",
+      "required": ["ran", "hits", "models"],
+      "properties": {
+        "ran": { "type": "boolean" },
+        "reason": { "type": "string" },
+        "models": { "type": "array", "items": { "type": "object" } },
+        "n_models": { "type": "integer" },
+        "hits": { "type": "array", "items": { "type": "object" } },
+        "n_hits": { "type": "integer" },
+        "target_db_size": { "type": ["integer", "null"], "description": "Number of target sequences the HMMER E-value was computed against." },
+        "targets": { "type": "array", "items": { "type": "object" } },
+        "report_evalue": { "type": ["number", "null"] },
+        "version": { "type": ["string", "null"] },
+        "params": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "arbiter": {
+      "type": "object",
+      "required": ["rows", "n_domain_present", "n_domain_absent", "n_conflicts"],
+      "properties": {
+        "rows": { "type": "array", "items": { "$ref": "#/$defs/arbiter" } },
+        "n_domain_present": { "type": "integer", "minimum": 0 },
+        "n_domain_absent": { "type": "integer", "minimum": 0 },
+        "n_conflicts": { "type": "integer", "minimum": 0 },
+        "n_sequence_evidence": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "resolved": {
+      "type": "object",
+      "required": ["cache_dir", "n_proteins", "present_evalue_cutoff", "weak_evalue_cutoff", "report_evalue"],
+      "properties": {
+        "cache_dir": { "type": "string" },
+        "n_proteins": { "type": "integer", "minimum": 0 },
+        "present_evalue_cutoff": { "type": "number" },
+        "weak_evalue_cutoff": { "type": "number" },
+        "report_evalue": { "type": "number" },
+        "releases": { "type": "object" },
+        "interpro_errors": { "type": "array", "items": { "type": "object" } }
+      },
+      "additionalProperties": true
+    },
+    "errors": { "type": "array", "items": { "type": "object" } }
+  },
+  "$defs": {
+    "arbiter": {
+      "type": "object",
+      "required": ["accession", "conclusion"],
+      "properties": {
+        "accession": { "type": "string" },
+        "sequence_evidence_available": { "type": "boolean" },
+        "sequence_present": { "type": ["boolean", "string"] },
+        "sequence_evidence": { "type": "object" },
+        "domain_present": { "type": "boolean" },
+        "domain_absent": { "type": "boolean" },
+        "present_domains": { "type": "array", "items": { "type": "string" } },
+        "absent_domains": { "type": "array", "items": { "type": "string" } },
+        "requested_domains": { "type": "array", "items": { "type": "string" } },
+        "conclusion": {
+          "type": "string",
+          "enum": [
+            "domain_only",
+            "domain_supported",
+            "domain_arbiter_present_without_sequence_hit",
+            "sequence_present_without_domain",
+            "domain_absent",
+            "unresolved"
+          ]
+        },
+        "note": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

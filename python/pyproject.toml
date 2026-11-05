@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lifesci"
+version = "0.2.0"
+description = "Reproducible molecular/cell-biology research tool layer (lifesci.* commands) for the DeepSeek Harness"
+readme = "../README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "dsh-lifesci contributors" }]
+keywords = ["bioinformatics", "structural-biology", "homology", "provenance", "reproducibility"]
+dependencies = [
+  "pyhmmer==0.12.3",
+  "biopython>=1.88",
+  "gemmi>=0.7",
+  "numpy>=1.26",
+  "scipy>=1.11",
+  "matplotlib>=3.8",
+  "jsonschema>=4.20",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-timeout>=2.3"]
+
+[project.scripts]
+lifesci = "lifesci.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["lifesci*"]
+
+[tool.setuptools.package-data]
+lifesci = ["schemas/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = [
+  "network: hits real public portals; skipped unless LIFESCI_NETWORK=1",
+  "slow: long-running jobs (>60 s); only with LIFESCI_SLOW=1",
+]
+filterwarnings = ["ignore::DeprecationWarning:Bio.*"]

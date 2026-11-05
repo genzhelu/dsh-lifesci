@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/report.schema.json",
+  "title": "lifesci.report payload",
+  "description": "Evidence-graded Markdown report build result.",
+  "type": "object",
+  "required": [
+    "markdown_path",
+    "json_path",
+    "title",
+    "n_claims",
+    "grades",
+    "caveats",
+    "provenance_table"
+  ],
+  "properties": {
+    "markdown_path": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Path of the written Markdown report (null only in dry-run mode)."
+    },
+    "json_path": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Path of the machine-readable report JSON (if the library produced one)."
+    },
+    "out": {
+      "type": "string",
+      "description": "Requested Markdown output path."
+    },
+    "title": {
+      "type": "string"
+    },
+    "n_claims": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "grades": {
+      "type": "object",
+      "description": "Claim counts per evidence grade: ESTABLISHED / INFERRED / UNKNOWN.",
+      "required": [
+        "ESTABLISHED",
+        "INFERRED",
+        "UNKNOWN"
+      ],
+      "properties": {
+        "ESTABLISHED": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "INFERRED": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "UNKNOWN": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "caveats": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "provenance_table": {
+      "type": "array",
+      "description": "Provenance records rendered into the report table (kind/time/url/sha256/release/...).",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "n_provenance": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "dry_run": {
+      "type": "boolean"
+    },
+    "generated_at": {
+      "type": "string",
+      "description": "Deterministic generation timestamp rendered in the report header."
+    }
+  },
+  "additionalProperties": true
+}

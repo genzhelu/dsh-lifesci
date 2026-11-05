@@ -1,0 +1,63 @@
+{
+  "name": "@genzhelu/dsh-lifesci",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Reproducible life-science tools for DeepSeek Harness: sequence retrieval and homolog search, domain/orthology evidence, structure retrieval and comparison, alignment mapping, contacts, figures and evidence-graded reports, with provenance and offline cache replay.",
+  "icon": "icon.svg",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "files": [
+    "dist",
+    "python",
+    "schemas",
+    "cordis.patch.yml",
+    "locale",
+    "icon.svg",
+    "docs",
+    "scripts",
+    "README.md",
+    "install.md",
+    "CHANGELOG.md",
+    "requirements.txt",
+    "requirements-dev.txt"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "node scripts/generate-tool-specs.mjs && tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "generate:toolspec": "node scripts/generate-tool-specs.mjs",
+    "test": "node scripts/run-tests.mjs",
+    "test:node": "node --test tests/unit/*.test.mjs tests/golden/*.test.mjs",
+    "test:unit": "node --test tests/unit/*.test.mjs",
+    "test:golden": "node --test tests/golden/*.test.mjs",
+    "test:python": "node scripts/python-tests.mjs",
+    "test:network": "node --test tests/network/*.test.mjs && node scripts/python-tests.mjs --network"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/genzhelu/dsh-lifesci.git"
+  },
+  "homepage": "https://github.com/genzhelu/dsh-lifesci",
+  "bugs": {
+    "url": "https://github.com/genzhelu/dsh-lifesci/issues"
+  },
+  "license": "MIT",
+  "author": "dsh-lifesci contributors",
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "typescript": "5.9.3"
+  }
+}

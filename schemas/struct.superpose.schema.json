@@ -1,0 +1,300 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/struct.superpose.schema.json",
+  "title": "lifesci.struct.superpose payload",
+  "description": "Column-based superposition (kabsch) or pairwise Foldseek alignment (foldseek).",
+  "type": "object",
+  "required": [
+    "mode"
+  ],
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": [
+        "kabsch",
+        "foldseek"
+      ]
+    },
+    "reference": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Reference structure id (kabsch)."
+    },
+    "core": {
+      "type": "object",
+      "description": "kabsch: core-column definition and local-window information.",
+      "properties": {
+        "n_columns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "column_span": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "exclude_spans": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        "core_spans": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        "focus_spans": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        },
+        "local_window": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "n_local_columns": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    },
+    "transforms": {
+      "type": "object",
+      "description": "kabsch: structure id -> {R: 3x3 row-major rotation, t: [x,y,z], core_rmsd, n_core}; applies to structure coordinates to reach the reference frame.",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "R",
+          "t"
+        ],
+        "properties": {
+          "R": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "t": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 3,
+            "maxItems": 3
+          },
+          "core_rmsd": {
+            "type": "number"
+          },
+          "n_core": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "rmsd_core": {
+      "type": "array",
+      "description": "kabsch: per-structure core RMSD (\u00c5) after superposition.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "rmsd": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "n_columns": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "n_core_columns": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "rmsd_local": {
+      "type": "array",
+      "description": "kabsch: per-structure RMSD (\u00c5) over local core columns near the focus spans, using the core transform.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "rmsd": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "n_columns": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "per_structure": {
+      "type": "array",
+      "description": "kabsch: library per-structure summary (mapped columns, core used, missing core columns).",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "absent_columns": {
+      "type": "object",
+      "description": "kabsch: structure id -> core columns absent from that structure.",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      }
+    },
+    "column_maps": {
+      "type": "object",
+      "description": "kabsch: per-structure colmap summary (n_columns, chains, column span).",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "parameters": {
+      "type": "object"
+    },
+    "pairs": {
+      "type": "array",
+      "description": "foldseek: per structure-pair alignment result with top hits.",
+      "items": {
+        "type": "object",
+        "required": [
+          "a",
+          "b"
+        ],
+        "properties": {
+          "a": {
+            "type": "string"
+          },
+          "b": {
+            "type": "string"
+          },
+          "hits": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "top": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": true
+          },
+          "n_hits": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "command": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "dry_run": {
+            "type": "boolean"
+          },
+          "query_path": {
+            "type": "string"
+          },
+          "target_path": {
+            "type": "string"
+          },
+          "top_tm_score": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Highest alignment TM-score among the reported hits (query-normalised; see warnings)."
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "binary": {
+      "type": "object",
+      "description": "foldseek: resolved binary info (available, path, version, sha256, error).",
+      "additionalProperties": true
+    },
+    "out_dir": {
+      "type": "string"
+    },
+    "dry_run": {
+      "type": "boolean"
+    },
+    "artifacts": {
+      "type": "object",
+      "properties": {
+        "json_path": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

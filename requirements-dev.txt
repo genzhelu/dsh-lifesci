@@ -1,0 +1,4 @@
+# Development/test dependencies (not needed to run the plugin).
+-r requirements.txt
+pytest>=8
+pytest-timeout>=2.3

@@ -1,0 +1,9 @@
+# Runtime dependencies for the lifesci science layer (python/lifesci).
+# Install with:  .venv/bin/pip install -r requirements.txt
+pyhmmer==0.12.3
+biopython>=1.88
+gemmi>=0.7
+numpy>=1.26
+scipy>=1.11
+matplotlib>=3.8
+jsonschema>=4.20

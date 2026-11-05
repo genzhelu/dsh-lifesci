@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/doctor.schema.json",
+  "title": "lifesci.doctor payload",
+  "type": "object",
+  "required": [
+    "status",
+    "lifesci_version",
+    "python",
+    "packages",
+    "external_tools",
+    "cache",
+    "datasets",
+    "releases",
+    "network",
+    "checks"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["ok", "ok-with-warnings", "degraded", "offline"]
+    },
+    "lifesci_version": { "type": "string" },
+    "python": { "type": "object" },
+    "packages": { "type": "object" },
+    "external_tools": { "type": "object" },
+    "cache": { "type": "object" },
+    "datasets": { "type": "object" },
+    "schemas": { "type": "object" },
+    "releases": { "type": "object" },
+    "network": { "type": "object" },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["check", "status", "detail"],
+        "properties": {
+          "check": { "type": "string" },
+          "status": { "type": "string", "enum": ["ok", "warn", "error"] },
+          "detail": {}
+        },
+        "additionalProperties": false
+      }
+    },
+    "exit_meaning": { "type": "object" }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,45 @@
+# --- Python ---
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+*.so
+
+# --- Node ---
+node_modules/
+.npm-cache/
+*.tsbuildinfo
+# dist/ is committed on purpose: git installs need the built entry point
+
+# --- Lifesci runtime state (cache, provenance logs, derived data) ---
+.lifesci-cache/
+.lifesci-cache-*/
+.cache/
+.cache-*/
+logs/
+out/
+data/downloads/
+tools/bin/
+
+# --- Misc ---
+.DS_Store
+*.log
+*.swp
+*~
+
+tools/tmp/
+
+# Default output locations / stray test artefacts at repository root
+/undefined/
+/*.pml
+/*.pse
+/lifesci-report.md
+/lifesci-report.json
+/lifesci-figures/
+/lifesci-struct-superpose/
+/lifesci-struct-superpose.json

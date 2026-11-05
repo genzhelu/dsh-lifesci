@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/struct.fetch.schema.json",
+  "title": "lifesci.struct.fetch payload",
+  "description": "Downloaded structure models/files with SHA-256 and explicit unavailable verdicts.",
+  "type": "object",
+  "required": ["structures", "unavailable", "resolved"],
+  "properties": {
+    "dry_run": { "type": "boolean" },
+    "requested": { "type": "object" },
+    "planned_requests": { "type": "array", "items": { "type": "object" } },
+    "structures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "source", "kind", "available"],
+        "properties": {
+          "id": { "type": "string" },
+          "source": {
+            "type": "string",
+            "enum": ["alphafold", "esmfold", "pdb", "emdb"]
+          },
+          "kind": { "type": "string" },
+          "path": { "type": ["string", "null"] },
+          "sha256": { "type": ["string", "null"], "description": "SHA-256 reported by the adapter for the upstream payload." },
+          "file_sha256": { "type": ["string", "null"], "description": "SHA-256 recomputed over the written file." },
+          "bytes": { "type": ["integer", "null"] },
+          "model_version": { "type": ["string", "integer", "null"] },
+          "release": { "type": ["string", "null"] },
+          "entry_id": { "type": ["string", "null"] },
+          "available": { "type": "boolean" },
+          "url": { "type": ["string", "null"] },
+          "format": { "type": "string" },
+          "fallback_for": { "type": "string" },
+          "sequence_length": { "type": "integer" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "unavailable": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "requested_source", "reason", "explicit_no_model"],
+        "properties": {
+          "id": { "type": "string" },
+          "requested_source": { "type": "string" },
+          "reason": { "type": "string" },
+          "attempted": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["source", "status"],
+              "properties": {
+                "source": { "type": "string" },
+                "status": { "type": "string" },
+                "detail": { "type": "object" }
+              },
+              "additionalProperties": true
+            }
+          },
+          "explicit_no_model": { "const": true },
+          "detail": { "type": "object" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "resolved": {
+      "type": "object",
+      "required": ["cache_dir", "n_requested", "n_available", "n_unavailable"],
+      "properties": {
+        "cache_dir": { "type": "string" },
+        "out_dir": { "type": ["string", "null"] },
+        "n_requested": { "type": "integer", "minimum": 0 },
+        "n_available": { "type": "integer", "minimum": 0 },
+        "n_unavailable": { "type": "integer", "minimum": 0 },
+        "providers": { "type": "object" },
+        "releases": { "type": "object" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

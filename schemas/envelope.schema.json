@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/envelope.schema.json",
+  "title": "lifesci command envelope",
+  "description": "Uniform JSON envelope returned by every lifesci command and agent tool.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ok",
+    "command",
+    "version",
+    "schema_version",
+    "started_at",
+    "finished_at",
+    "duration_s",
+    "offline",
+    "dry_run",
+    "cache_dir",
+    "data",
+    "warnings",
+    "human_review",
+    "provenance"
+  ],
+  "properties": {
+    "ok": { "type": "boolean" },
+    "command": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$"
+    },
+    "version": { "type": "string" },
+    "schema_version": { "const": 1 },
+    "started_at": { "type": "string" },
+    "finished_at": { "type": "string" },
+    "duration_s": { "type": "number", "minimum": 0 },
+    "offline": { "type": "boolean" },
+    "dry_run": { "type": "boolean" },
+    "cache_dir": { "type": "string" },
+    "data": {},
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/diagnostic" }
+    },
+    "human_review": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/diagnostic" }
+    },
+    "provenance": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/provenance" }
+    },
+    "error": { "$ref": "#/$defs/error" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "ok": { "const": false } }, "required": ["ok"] },
+      "then": {
+        "required": ["error"],
+        "properties": {
+          "data": { "type": "null" },
+          "error": { "$ref": "#/$defs/error" }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "diagnostic": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "severity": {
+          "type": "string",
+          "enum": ["info", "warning", "error", "required"]
+        },
+        "context": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "retriable": { "type": "boolean" },
+        "details": { "type": "object" },
+        "fallbacks": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["kind", "time"],
+      "properties": {
+        "kind": { "type": "string" },
+        "time": { "type": "string" },
+        "pid": { "type": "integer" },
+        "lifesci_version": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

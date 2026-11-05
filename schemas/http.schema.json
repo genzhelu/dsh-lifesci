@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/http.schema.json",
+  "title": "lifesci.http payload",
+  "description": "Raw cached-HTTP primitive result: request plan, response metadata, optional decoded body and output file.",
+  "type": "object",
+  "required": ["request", "response"],
+  "properties": {
+    "dry_run": {
+      "type": "boolean",
+      "description": "True when the payload is a request plan and no network call was made."
+    },
+    "request": {
+      "type": "object",
+      "required": ["method", "url"],
+      "properties": {
+        "method": { "type": "string" },
+        "url": { "type": "string" },
+        "final_url": { "type": "string" },
+        "params": { "type": "object" },
+        "headers_sent": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Names (never values) of caller-supplied headers."
+        },
+        "cache": { "type": "boolean" },
+        "has_body": { "type": "boolean" },
+        "body_forms": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Which body-encoding inputs were supplied (dry-run only)."
+        },
+        "body_sha256": { "type": ["string", "null"] },
+        "files": { "type": "array", "items": { "type": "object" } },
+        "idempotent": { "type": ["boolean", "null"] },
+        "allow_status": { "type": "array", "items": { "type": "integer" } },
+        "database": { "type": ["string", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "response": {
+      "type": "object",
+      "required": ["status", "headers", "sha256", "bytes", "from_cache", "attempts", "elapsed_ms"],
+      "properties": {
+        "status": { "type": ["integer", "null"] },
+        "headers": { "type": "object" },
+        "sha256": { "type": ["string", "null"] },
+        "bytes": { "type": ["integer", "null"] },
+        "from_cache": { "type": "boolean" },
+        "attempts": { "type": "integer", "minimum": 0 },
+        "elapsed_ms": { "type": "number", "minimum": 0 },
+        "request_id": { "type": ["string", "null"] },
+        "content_type": { "type": ["string", "null"] },
+        "encoding": { "type": ["string", "null"] },
+        "release": { "type": ["string", "null"] },
+        "final_url": { "type": ["string", "null"] },
+        "cache_key": { "type": ["string", "null"] },
+        "dry_run": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "parsed": {
+      "description": "Decoded body: parsed JSON, a {text,truncated,total_characters} preview, or null."
+    },
+    "resolved": {
+      "type": "object",
+      "description": "Resolved database release when the response exposed one.",
+      "additionalProperties": true
+    },
+    "out": {
+      "type": ["object", "null"],
+      "required": ["path", "sha256", "bytes"],
+      "properties": {
+        "path": { "type": "string" },
+        "sha256": { "type": "string" },
+        "bytes": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}

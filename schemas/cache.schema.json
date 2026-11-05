@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dsh-lifesci.local/schemas/cache.schema.json",
+  "title": "lifesci.cache payload",
+  "description": "Cache inspection/maintenance result. Only the fields relevant to the requested action are present.",
+  "type": "object",
+  "required": ["action", "root"],
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": ["stats", "list", "verify", "prune", "clear"]
+    },
+    "root": { "type": "string", "description": "Absolute cache directory path." },
+    "filters": { "type": "object" },
+    "offline": { "type": "boolean" },
+    "dry_run": { "type": "boolean" },
+    "n_entries": { "type": "integer", "minimum": 0 },
+    "stats": {
+      "type": "object",
+      "description": "cache.stats(): n_entries, n_expired, bytes, databases, releases, missing_bodies."
+    },
+    "entries": {
+      "type": "array",
+      "description": "Deterministic metadata for the selected entries (sorted by cache key).",
+      "items": {
+        "type": "object",
+        "required": ["key", "url"],
+        "properties": {
+          "key": { "type": "string" },
+          "url": { "type": "string" },
+          "database": { "type": ["string", "null"] },
+          "release": { "type": ["string", "null"] },
+          "status": { "type": ["integer", "null"] },
+          "bytes": { "type": "integer", "minimum": 0 },
+          "sha256": { "type": "string" },
+          "stored_at": { "type": "string" },
+          "ttl_seconds": { "type": "number" },
+          "expired": { "type": "boolean" },
+          "has_body": { "type": "boolean" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "verification": {
+      "type": "object",
+      "required": ["ok", "n_checked", "n_failed"],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "n_checked": { "type": "integer", "minimum": 0 },
+        "n_failed": { "type": "integer", "minimum": 0 },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["key", "url", "ok"],
+            "properties": {
+              "key": { "type": "string" },
+              "url": { "type": "string" },
+              "ok": { "type": "boolean" },
+              "error": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "prune": {
+      "type": "object",
+      "properties": {
+        "n_pruned": { "type": "integer", "minimum": 0 },
+        "n_expired": { "type": "integer", "minimum": 0 },
+        "bytes_freed": { "type": "integer", "minimum": 0 },
+        "dry_run": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "clear": {
+      "type": "object",
+      "properties": {
+        "n_cleared": { "type": "integer", "minimum": 0 },
+        "bytes_freed": { "type": "integer", "minimum": 0 },
+        "root": { "type": "string" },
+        "dry_run": { "type": "boolean" },
+        "would_clear": { "type": "boolean" },
+        "n_entries": { "type": "integer", "minimum": 0 },
+        "bytes": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
