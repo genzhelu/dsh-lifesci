@@ -10,6 +10,34 @@ Every command is a JSON-in/JSON-out operation available both as a CLI
 content-addressed HTTP cache, pinned database releases, a JSONL provenance log, polite
 retries/rate limiting, offline replay, and automatic scientific-caveat warnings.
 
+## Quick install
+
+**Fastest — DeepSeek Harness Web UI:** open **Plugins → Add plugin**, choose a Git address, and
+enter:
+
+```text
+git+https://github.com/genzhelu/dsh-lifesci.git
+```
+
+Enable the `lifesci` bundle when the install completes. A profile install has no bundled Python
+environment, so also set the bundle's `pythonPath` (or `LIFESCI_PYTHON`) to a Python ≥ 3.11
+environment with `pip install -r requirements.txt` — otherwise the tools are exposed but calls fail
+on missing scientific packages. If another `lifesci` bundle is already installed (for example a
+local checkout), remove or disable it first: the row id `lifesci` must be unique.
+
+**Self-contained — repo-local venv:** clone, build, then add the checkout's absolute path:
+
+```bash
+git clone https://github.com/genzhelu/dsh-lifesci.git
+cd dsh-lifesci
+python3.11 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+npm install --no-audit --no-fund && npm run build
+# Plugins -> Add plugin -> /absolute/path/to/dsh-lifesci
+```
+
+See [Install from GitHub](#install-from-github) for verification, upgrading and troubleshooting.
+
 ## What you get
 
 - **17 commands / agent tools** (`lifesci_*`): `doctor`, `http`, `seq.fetch`, `seq.search`,
